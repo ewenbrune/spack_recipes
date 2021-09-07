@@ -52,6 +52,7 @@ class Arcane(CMakePackage):
     variant("mkl", default=False, description="Use Intel MKL")
     variant("boost", default=False, description="Use Boost")
     variant("bzip2", default=False, description="Use bzip2 compression")
+    variant("lz4", default=False, description="Use lz4 compression")
     variant("vtk", default=False, description="Use VTK XDMF")
     variant("osmesa", default=False, description="Use Mesa rendering")
     variant("iceT", default=False, description="Use IceT")
@@ -91,6 +92,7 @@ class Arcane(CMakePackage):
     depends_on("mkl", when="+mkl")
     depends_on("boost", when="+boost")
     depends_on("bzip2", when="+bzip2")
+    depends_on("lz4", when="+lz4")
     depends_on("vtk", when="+vtk")
     depends_on("mesa", when="+osmesa")
     depends_on("icet", when="+iceT")
@@ -122,6 +124,37 @@ class Arcane(CMakePackage):
     depends_on("hypre", when="+hypre")
     depends_on("lima", when="+lima")
 
+    def build_required(self):
+        to_cmake = {
+            'mpi': 'MPI',
+            'hdf5': 'HDF5',
+            'bzip2': 'BZip2',
+            'lz4': 'LZ4',
+            'med': 'MEDFile',
+            'tbb': 'TBB',
+            'vtk': ['vtkIOXML', 'vtkIOXdmf2'],
+            'mkl': 'MKL',
+            'otf2': 'Otf2',
+            'osmesa': 'OSMesa',
+            'iceT': 'IceT',
+            'cuda': 'CUDAToolkit',
+            'parmetis': 'Parmetis',
+            'scotch': 'PTScotch',
+            'zoltan': 'Zoltan',
+            'libunwind': 'LibUnwind',
+            'udunits': 'Udunits',
+            'valgrind': 'Valgrind',
+            'hwloc': 'HWLoc',
+            'papi': 'Papi',
+            'sloop': 'Sloop',
+            'hypre': 'Hypre',
+            'lima': 'Lima',
+            'wrapper': ['MonoEmbed', 'CoreClrEmbed', 'SWIG'],
+        }
+        return ';'.join(
+            map(lambda v: v[1] if '+{}'.format(v[0]) in self.specs else None,
+                to_cmake.iters()))
+
     def cmake_args(self):
         spec = self.spec
         args = [
@@ -135,12 +168,17 @@ class Arcane(CMakePackage):
             args.append("-DARCANE_WANT_NOMPI=YES")
 
         default_partitionner = "Metis"
-        if "scotch" in self.spec:
+        if "metis" in self.spec:
+            default_partitionner = "Metis"
+        elif "scotch" in self.spec:
             default_partitionner = "PTScotch"
         elif "zoltan" in self.spec:
             default_partitionner = "Zoltan"
 
         args.append(
             self.define("ARCANE_DEFAULT_PARTITIONER", default_partitionner))
+
+        args.append(
+            self.define('ARCANE_REQUIRED_PACKAGE_LIST', self.build_required()))
 
         return args
