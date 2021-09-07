@@ -124,13 +124,9 @@ class Arcane(CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-        # NOTE: les variables ARCANE_WANT_LIBXML2 et ARCANE_DOTNET_RUNTIME
-        # ne sont plus utilisées dans les versions 3+ de Arcane
         args = [
             self.define("BUILD_SHARED_LIBS", True),
             self.define("ARCANE_BUILD_WITH_SPACK", True),
-            self.define("ARCANE_WANT_LIBXML2", "libxml2"),
-            self.define("ARCANE_DOTNET_RUNTIME", "coreclr"),
             self.define_from_variant("ARCANE_BUILD_MODE", "build_type"),
         ]
         if "mpi" in self.spec:
