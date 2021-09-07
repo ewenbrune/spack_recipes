@@ -34,13 +34,23 @@ class Alien(CMakePackage):
 
     version(
         '1.0.1',
-        sha256="ac8360f0fe80937397e9aaa5980236ea5338ae7b5b2ad5278cf463a35e41277c",
-        url = "https://gitlab.com/cea-ifpen/alien/-/archive/v1.0.1/alien-v1.0.1.tar.gz",
+        sha256=
+        "ac8360f0fe80937397e9aaa5980236ea5338ae7b5b2ad5278cf463a35e41277c",
+        url=
+        "https://gitlab.com/cea-ifpen/alien/-/archive/v1.0.1/alien-v1.0.1.tar.gz",
     )  # noqa: E501
+
     version(
         '1.0.2',
-        sha256='4191972e89bf61d7130278c2c892f638aeab27f96b920c1fb122f86251fbbfa5',
-        url = "https://gitlab.com/cea-ifpen/alien/-/archive/v1.0.2/alien-v1.0.2.tar.gz",
+        sha256=
+        '4191972e89bf61d7130278c2c892f638aeab27f96b920c1fb122f86251fbbfa5',
+        url=
+        "https://gitlab.com/cea-ifpen/alien/-/archive/v1.0.2/alien-v1.0.2.tar.gz",
+    )  # noqa: E501
+
+    version(
+        '1.1.0',
+        sha256='e0250eb5983dd4703a9d498951bdbc7da52c0271ac7f1e0149ceeabb21da06e0'
     )  # noqa: E501
 
     variant('hdf5', description='hdf5 export for Alien', default=False)
@@ -50,10 +60,10 @@ class Alien(CMakePackage):
 
     variant('hypre', description='Enable hypre backend', default=False)
     variant('petsc', description='Enable PETSc backend', default=False)
-    
+
     depends_on('hypre +mpi', when='+hypre')
     depends_on('petsc +mpi', when='+petsc')
-    
+
     depends_on("cmake", type="build")
 
     # Exported build system depends on arccon, we must export it to the client
@@ -69,9 +79,13 @@ class Alien(CMakePackage):
 
     def cmake_args(self):
         return [
+            # Do not use any default options for Alien
+            self.define('ALIEN_DEFAULT_OPTIONS', False),
             self.define_from_variant('ALIEN_USE_HDF5', 'hdf5'),
             self.define_from_variant('ALIEN_USE_XML', 'xml'),
             self.define_from_variant('ALIEN_COMPONENT_MoveSemantic', 'move'),
             self.define_from_variant('ALIEN_COMPONENT_RefSemantic', 'ref'),
+            self.define_from_variant('ALIEN_PLUGIN_HYPRE', 'hypre'),
+            self.define_from_variant('ALIEN_PLUGIN_PETSC', 'petsc'),
             self.define('BUILD_SHARED_LIBS', True),
         ]
