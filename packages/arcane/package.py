@@ -1,0 +1,150 @@
+##############################################################################
+# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
+#
+# This file is part of Spack.
+# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
+# LLNL-CODE-647188
+#
+# For details, see https://github.com/spack/spack
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License (as
+# published by the Free Software Foundation) version 2.1, February 1999.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
+# conditions of the GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+##############################################################################
+from spack import *
+import os
+
+
+class Arcane(CMakePackage):
+    """Arcane Framework"""
+
+    homepage = "https://gitlab.com/cea-ifpen"
+    url = "https://gitlab.com/cea-ifpen/arcane/-/archive/v2.19.0/arcane-v2.19.0.tar.gz"
+    git = "https://gitlab.com/cea-ifpen/arcane.git"
+
+    version(
+        "3.0.1",
+        sha256="45afb7fadc9ae5ca430c72c9c73ca6ba46816092aca502d0266d9140fb47ef35"
+    )  # noqa: E501
+
+    version("main", branch="main")
+    version('dev_cea', branch='dev/cea')
+
+    variant("valgrind", default=False, description="run tests with valgrind")
+    variant("mpi", default=True, description="Use MPI")
+    variant("hdf5", default=False, description="HDF5 IO")
+    variant("med", default=False, description="Salome MED support")
+    variant("otf2", default=False, description="OTF2 library support")
+    variant("tbb", default=True, description="Use Intel TBB")
+    variant("wrapper", default=True, description=".Net wrappers")
+
+    variant("mkl", default=False, description="Use Intel MKL")
+    variant("boost", default=False, description="Use Boost")
+    variant("bzip2", default=False, description="Use bzip2 compression")
+    variant("vtk", default=False, description="Use VTK XDMF")
+    variant("osmesa", default=False, description="Use Mesa rendering")
+    variant("iceT", default=False, description="Use IceT")
+    variant("cuda", default=False, description="Enable Cuda")
+
+    variant("parmetis", default=False, description="Use ParMetis partitioner")
+    variant("scotch", default=False, description="Use (PT-)Scotch partitioner")
+    variant("zoltan", default=False, description="Use Zoltan partitioner")
+
+    variant("libunwind",
+            default=False,
+            description="Back trace with libUnwind")
+    variant("udunits", default=False, description="Udunits")
+    variant("hwloc", default=True, description="hwloc support")
+    variant("papi", default=False, description="PAPI counters")
+
+    depends_on("cmake@3.13:", type="build")
+    depends_on("arccon@1.1:", type=("build"))
+    depends_on("axlstar@2.0:", type=("build"))
+    depends_on("arccore@2.0:", type=("build", "link", "run"))
+    depends_on("arccore build_mode=Debug",
+               type=("build", "link", "run"),
+               when="build_type='Debug'")
+    depends_on("arcdependencies", type=("build"))
+    depends_on("mono@5.16:", type=("build", "link", "run"), when="+wrapper")
+    depends_on("swig@4:", type=("build"), when="+wrapper")
+    depends_on(
+        "dotnet-core-sdk@3.1:",
+        type=("build", "link", "run"),
+    )
+    depends_on("glib")
+    depends_on("libxml2")
+    depends_on("valgrind", when="+valgrind")
+    depends_on("mpi", when="+mpi")
+    depends_on("hdf5", when="+hdf5")
+    depends_on("intel-tbb", when="+tbb")
+    depends_on("mkl", when="+mkl")
+    depends_on("boost", when="+boost")
+    depends_on("bzip2", when="+bzip2")
+    depends_on("vtk", when="+vtk")
+    depends_on("mesa", when="+osmesa")
+    depends_on("icet", when="+iceT")
+    depends_on("cuda", when="+cuda")
+    depends_on("med", when="+med")
+    depends_on("otf2", when="+otf2")
+
+    depends_on("parmetis@4:", when="+parmetis")
+    depends_on("scotch +mpi -metis +int64", when="+scotch")
+    depends_on("zoltan +mpi -parmetis -fortran", when="+zoltan")
+
+    depends_on("libunwind", when="+libunwind")
+    depends_on("udunits2", when="+udunits")
+    depends_on("hwloc", when="+hwloc")
+    depends_on("papi", when="+papi")
+
+    depends_on("hypre")  # For Aleph
+
+    conflicts("+parmetis", when="~mpi")
+    conflicts("+zoltan", when="~mpi")
+    conflicts("+scotch", when="~mpi")
+    conflicts("+med", when="~mpi")
+
+    # To be moved
+    variant("sloop", default=False, description="SLOOP linear solver")
+    variant("hypre", default=False, description="Hypre linear solver")
+    variant("lima", default=False, description="LIMA mesh library")
+    depends_on("sloop", when="+sloop")
+    depends_on("hypre", when="+hypre")
+    depends_on("lima", when="+lima")
+
+    def cmake_args(self):
+        spec = self.spec
+        # NOTE: les variables ARCANE_WANT_LIBXML2 et ARCANE_DOTNET_RUNTIME
+        # ne sont plus utilisées dans les versions 3+ de Arcane
+        args = [
+            self.define("BUILD_SHARED_LIBS", True),
+            self.define("ARCANE_BUILD_WITH_SPACK", True),
+            self.define("ARCANE_WANT_LIBXML2", "libxml2"),
+            self.define("ARCANE_DOTNET_RUNTIME", "coreclr"),
+            self.define_from_variant("ARCANE_BUILD_MODE", "build_type"),
+        ]
+        if "mpi" in self.spec:
+            args.append("-DARCANE_WANT_NOMPI=NO")
+        else:
+            args.append("-DARCANE_WANT_NOMPI=YES")
+
+        default_partitionner = "Metis"
+        if "scotch" in self.spec:
+            default_partitionner = "PTScotch"
+        elif "zoltan" in self.spec:
+            default_partitionner = "Zoltan"
+
+        args.append(
+            self.define("ARCANE_DEFAULT_PARTITIONER", default_partitionner))
+
+        return args
