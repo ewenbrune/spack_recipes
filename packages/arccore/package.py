@@ -67,13 +67,12 @@ class Arccore(CMakePackage):
             self.define_from_variant("ARCCORE_USE_MPI", "mpi"),
         ]
 
-        args.append(self.define_from_variant("ARCCORE_BUILD_MODE", 'build_mode'))
+        args.append(
+            self.define_from_variant("ARCCORE_BUILD_MODE", 'build_mode'))
 
-        # Pour les anciennes versions, on positionne ARCCORE_DEBUG et ARCCORE_CHECK
-        # directement
-        if build_mode == "Debug" or build_mode == "Check":
+        if "build_mode=Debug" in self.spec or "build_mode=Check" in self.spec:
             args.append(self.define("ARCCORE_CHECK", True))
-        if build_mode == "Debug":
+        if "build_mode=Debug" in self.spec:
             args.append(self.define("ARCCORE_DEBUG", True))
 
         return args
