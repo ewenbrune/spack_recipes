@@ -50,7 +50,6 @@ class Arcane(CMakePackage):
     variant("wrapper", default=True, description=".Net wrappers")
 
     variant("mkl", default=False, description="Use Intel MKL")
-    variant("boost", default=False, description="Use Boost")
     variant("bzip2", default=False, description="Use bzip2 compression")
     variant("lz4", default=False, description="Use lz4 compression")
     variant("vtk", default=False, description="Use VTK XDMF")
@@ -69,6 +68,11 @@ class Arcane(CMakePackage):
     variant("hwloc", default=True, description="hwloc support")
     variant("papi", default=False, description="PAPI counters")
 
+    variant("coreclrembed",
+            default=True,
+            description="Use embedding with coreclr")
+    variant("monoembed", default=True, description="Use embedding with mono")
+
     depends_on("cmake@3.13:", type="build")
     depends_on("arccon@1.1:", type=("build"))
     depends_on("axlstar@2.0:", type=("build"))
@@ -77,7 +81,7 @@ class Arcane(CMakePackage):
                type=("build", "link", "run"),
                when="build_type='Debug'")
     depends_on("arcdependencies", type=("build"))
-    depends_on("mono@5.16:", type=("build", "link", "run"), when="+wrapper")
+    depends_on("mono@5.16:", type=("build", "link", "run"), when="+monoembed")
     depends_on("swig@4:", type=("build"), when="+wrapper")
     depends_on(
         "dotnet-core-sdk@3.1:",
@@ -90,7 +94,6 @@ class Arcane(CMakePackage):
     depends_on("hdf5", when="+hdf5")
     depends_on("intel-tbb", when="+tbb")
     depends_on("mkl", when="+mkl")
-    depends_on("boost", when="+boost")
     depends_on("bzip2", when="+bzip2")
     depends_on("lz4", when="+lz4")
     depends_on("vtk", when="+vtk")
@@ -149,11 +152,16 @@ class Arcane(CMakePackage):
             'sloop': 'Sloop',
             'hypre': 'Hypre',
             'lima': 'Lima',
-            'wrapper': ['MonoEmbed', 'CoreClrEmbed', 'SWIG'],
+            'wrapper': 'SWIG',
+            'monoembed': 'MonoEmbed',
+            'coreclrembed': 'CoreClrEmbed',
         }
         return ';'.join(
-            map(lambda v: v[1] if '+{}'.format(v[0]) in self.specs else None,
-                to_cmake.iters()))
+            map(
+                lambda v: v[1]
+                if not isintance(v[1], list) else ";".join(v[1]),
+                filter(lambda v: '+{}'.format(v[0]) in self.specs,
+                       to_cmake.iters())))
 
     def cmake_args(self):
         spec = self.spec
