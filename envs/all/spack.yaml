@@ -1,0 +1,6 @@
+spack:
+  view: False
+  specs:
+    - alien+hypre+petsc~xml~hdf5+move+ref
+    - arcane~wrapper~hwloc~monoembed
+    - ccache
