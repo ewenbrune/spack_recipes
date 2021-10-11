@@ -1,5 +1,7 @@
 FROM ecpe4s/rhel8-runner-x86_64
 
+RUN dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && dnf install -y ccache
+
 RUN mkdir -p /spack && useradd spack && chown -R spack: /spack
 
 USER spack
@@ -16,7 +18,7 @@ COPY --chown=spack:spack . /recipes
 
 # setup our recipes
 RUN source /spack/share/spack/setup-env.sh && \
-    spack repo add /recipes
+    spack repo add --scope site /recipes
 
 # Define and compile an alien environment    
 RUN source /spack/share/spack/setup-env.sh && \
