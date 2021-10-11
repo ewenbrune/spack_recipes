@@ -9,9 +9,9 @@ USER spack
 # Download last release of spack and configure it to use buildcache
 RUN curl -L https://github.com/spack/spack/releases/download/v0.16.3/spack-0.16.3.tar.gz | tar xz -C /spack --strip-components=1 && \
     source /spack/share/spack/setup-env.sh && \
-    spack mirror add E4S https://cache.e4s.io && \
+    spack mirror add --scope site E4S https://cache.e4s.io && \
     spack buildcache keys -it && \
-    spack config add packages:all:target:[x86_64]
+    spack config --scope site add packages:all:target:[x86_64]
 
 # Copy this repo into the container
 COPY --chown=spack:spack . /recipes
