@@ -30,16 +30,21 @@ class Arcane(CMakePackage):
     """Arcane Framework"""
 
     homepage = "https://gitlab.com/cea-ifpen"
-    url = "https://gitlab.com/cea-ifpen/arcane/-/archive/v2.19.0/arcane-v2.19.0.tar.gz"
-    git = "https://gitlab.com/cea-ifpen/arcane.git"
+    url = "https://github.com/arcaneframework/framework/releases/download/arcane-v3.0.5.0/arcane-3.0.5.0.src.tar.gz"
+    git = "https://github.com/arcaneframework/framework.git"
 
     version(
         "3.0.1",
-        sha256="45afb7fadc9ae5ca430c72c9c73ca6ba46816092aca502d0266d9140fb47ef35"
+        sha256=
+        "45afb7fadc9ae5ca430c72c9c73ca6ba46816092aca502d0266d9140fb47ef35",
+        url=
+        "https://gitlab.com/cea-ifpen/arcane/-/archive/v3.0.1/arcane-v3.0.1.tar.gz",
     )  # noqa: E501
 
-    version("main", branch="main")
-    version('dev_cea', branch='dev/cea')
+    version(
+        '3.0.5.0',
+        sha256='24e0d1f2193aab2398a842d2e0cf9162c52d1d853e57feb60806085655a440d7'
+    )  # noqa: E501
 
     variant("valgrind", default=False, description="run tests with valgrind")
     variant("mpi", default=True, description="Use MPI")
@@ -74,9 +79,11 @@ class Arcane(CMakePackage):
     variant("monoembed", default=True, description="Use embedding with mono")
 
     depends_on("cmake@3.13:", type="build")
-    depends_on("arccon@1.1:", type=("build"))
+    depends_on("arccon@1.1:", type=("build"), when="@:3.0.4")
+    depends_on("arccon@1.2:", type=("build"), when="@3.0.5.0")
     depends_on("axlstar@2.0:", type=("build"))
-    depends_on("arccore@2.0:", type=("build", "link", "run"))
+    depends_on("arccore@2.0:", type=("build", "link", "run"), when="@:3.0.4")
+    depends_on("arccore@2.0.3:", type=("build", "link", "run"), when="@3.0.5:")
     depends_on("arccore build_mode=Debug",
                type=("build", "link", "run"),
                when="build_type='Debug'")
@@ -108,7 +115,7 @@ class Arcane(CMakePackage):
     depends_on("zoltan +mpi -parmetis -fortran", when="+zoltan")
 
     depends_on("libunwind", when="+libunwind")
-    depends_on("udunits2", when="+udunits")
+    depends_on("udunits", when="+udunits")
     depends_on("hwloc", when="+hwloc")
     depends_on("papi", when="+papi")
 

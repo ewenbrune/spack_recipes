@@ -28,10 +28,8 @@ from spack import *
 class Arccore(CMakePackage):
     """Base functionalities for simulation codes."""
     homepage = "https://gitlab.com/cea-ifpen"
-    url = "https://gitlab.com/cea-ifpen/arccore/-/archive/v1.2.4.0/arccore-v1.2.4.0.tar.gz"
-    git = "https://gitlab.com/cea-ifpen/arccore.git"
-    list_url = "https://gitlab.com/cea-ifpen/arccore/-/releases"
-    list_depth = 1
+    url = "https://github.com/arcaneframework/framework/releases/download/arccore-v2.0.3.0/arccore-2.0.3.0.src.tar.gz"
+    git = "https://github.com/arcaneframework/framework.git"
 
     variant(
         "build_mode",
@@ -42,16 +40,22 @@ class Arccore(CMakePackage):
 
     version(
         '2.0.0',
-        sha256='fd385c961ca333757575a93bf1dbfe9417b8c3ff83d2d1956b5d4ed432c9bedc'
+        sha256=
+        'fd385c961ca333757575a93bf1dbfe9417b8c3ff83d2d1956b5d4ed432c9bedc',
+        url=
+        "https://gitlab.com/cea-ifpen/arccore/-/archive/v2.0.0/arccore-v2.0.0.tar.gz"
     )  # noqa: E501
     version(
         '2.0.1',
-        sha256='d06508ff14d7f2b5e277fa5fc788eb7fd891886d7ffd65bee41c6a12d2ec58ae'
+        sha256=
+        'd06508ff14d7f2b5e277fa5fc788eb7fd891886d7ffd65bee41c6a12d2ec58ae',
+        url=
+        "https://gitlab.com/cea-ifpen/arccore/-/archive/v2.0.1/arccore-v2.0.1.tar.gz"
     )  # noqa: E501
-
-    version('master', branch='master')
-    version('main', branch='main')
-    version('dev_cea', branch='dev/cea')
+    version(
+        '2.0.3.0',
+        sha256='fb7678038234fe4dcbde364459a4fc91b737c7ffb6151ad634def9edf2e18705'
+    )  # noqa: E501
 
     variant('mpi', default=True, description='Use MPI')
 

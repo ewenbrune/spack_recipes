@@ -30,10 +30,9 @@ class Arcdependencies(CMakePackage):
     """Dependencies for Arccon/Arccore/Axlstar."""
 
     homepage = "https://gitlab.com/cea-ifpen"
-    url = "https://gitlab.com/cea-ifpen/dependencies/-/archive/v1.0/dependencies-v1.0.tar.gz"
-    git = "https://gitlab.com/cea-ifpen/dependencies.git"
+    git = "https://github.com/arcaneframework/dependencies.git"
 
-    version("master", branch="main")
+    version("main", branch="main")
 
     depends_on("cmake@3.12:", type=("build", "link"))
     depends_on("arccon", type=("build"))
