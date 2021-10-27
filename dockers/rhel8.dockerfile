@@ -20,20 +20,17 @@ COPY --chown=spack:spack . /recipes
 RUN source /spack/share/spack/setup-env.sh && \
     spack repo add --scope site /recipes
 
-# Define and compile an alien environment    
+# Define and compile an alien environment
 RUN source /spack/share/spack/setup-env.sh && \
     spack env activate -d /recipes/envs/alien && \
     spack concretize -f && spack install
-#    spack env activate --sh -d /recipes/envs/alien >> /etc/profile.d/alien.sh
 
-# No proper arcane release yet.
+# Define and compile an arcane environment
+RUN source /spack/share/spack/setup-env.sh && \
+    spack env activate -d /recipes/envs/arcane && \
+    spack concretize -f && spack install
 
-# # Define and compile an arcane environment    
-# RUN source /spack/share/spack/setup-env.sh && \
-#     spack env activate -d /recipes/envs/arcane && \
-#     spack concretize -f && spack install
-
-# # Define and compile an arcane and alien environment    
-# RUN source /spack/share/spack/setup-env.sh && \
-#     spack env activate -d /recipes/envs/alien && \
-#     spack concretize -f && spack install
+# Define and compile an arcane and alien environment
+RUN source /spack/share/spack/setup-env.sh && \
+    spack env activate -d /recipes/envs/alien && \
+    spack concretize -f && spack install
