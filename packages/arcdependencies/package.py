@@ -29,7 +29,7 @@ import os
 class Arcdependencies(CMakePackage):
     """Dependencies for Arccon/Arccore/Axlstar."""
 
-    homepage = "https://gitlab.com/cea-ifpen"
+    homepage = "https://arcaneframework.github.io"
     git = "https://github.com/arcaneframework/dependencies.git"
 
     version("main", branch="main")

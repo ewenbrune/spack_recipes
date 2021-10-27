@@ -28,7 +28,7 @@ from spack import *
 class Arccon(CMakePackage):
     """A CMake build system for HPC simulation codes."""
 
-    homepage = "https://gitlab.com/cea-ifpen"
+    homepage = "https://arcaneframework.github.io"
     url = "https://github.com/arcaneframework/framework/releases/download/arccon-v1.2.0/arccon-1.2.0.src.tar.gz"
     git = "https://github.com/arcaneframework/framework.git"
 

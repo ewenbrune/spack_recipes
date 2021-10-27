@@ -29,7 +29,7 @@ import os
 class Axlstar(CMakePackage):
     """Axl generator: a xml based code generator for Alien and Arcane."""
 
-    homepage = "https://gitlab.com/cea-ifpen"
+    homepage = "https://arcaneframework.github.io"
     url = "https://github.com/arcaneframework/framework/releases/download/axlstar-v2.0.0.0/axlstar-2.0.0.0.src.tar.gz"
     git = "https://github.com/arcaneframework/framework.git"
 

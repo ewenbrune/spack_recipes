@@ -28,7 +28,7 @@ from spack import *
 class Alien(CMakePackage):
     """Alien: Generic API for Linear Algebra."""
 
-    homepage = "https://github.com/arcaneframework/alien"
+    homepage = "https://arcaneframework.github.io/alien"
     url = "https://github.com/arcaneframework/alien/archive/refs/tags/v1.0.3.tar.gz"
     git = "https://github.com/arcaneframework/alien.git"
 

@@ -29,7 +29,7 @@ import os
 class Arcane(CMakePackage):
     """Arcane Framework"""
 
-    homepage = "https://gitlab.com/cea-ifpen"
+    homepage = "https://arcaneframework.github.io"
     url = "https://github.com/arcaneframework/framework/releases/download/arcane-v3.0.5.0/arcane-3.0.5.0.src.tar.gz"
     git = "https://github.com/arcaneframework/framework.git"
 

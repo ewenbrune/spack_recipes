@@ -27,7 +27,7 @@ from spack import *
 
 class Arccore(CMakePackage):
     """Base functionalities for simulation codes."""
-    homepage = "https://gitlab.com/cea-ifpen"
+    homepage = "https://arcaneframework.github.io"
     url = "https://github.com/arcaneframework/framework/releases/download/arccore-v2.0.3.0/arccore-2.0.3.0.src.tar.gz"
     git = "https://github.com/arcaneframework/framework.git"
 
