@@ -25,18 +25,22 @@
 from spack import *
 import os
 
+
 class Axlstar(CMakePackage):
     """Axl generator: a xml based code generator for Alien and Arcane."""
 
-    homepage = "https://gitlab.com/cea-ifpen"
-    url = "https://gitlab.com/cea-ifpen/axlstar/-/archive/v2.0.0/axlstar-v2.0.0.tar.bz2"
-    git = "https://gitlab.com/cea-ifpen/axlstar.git"
+    homepage = "https://arcaneframework.github.io"
+    url = "https://github.com/arcaneframework/framework/releases/download/axlstar-v2.0.0.0/axlstar-2.0.0.0.src.tar.gz"
+    git = "https://github.com/arcaneframework/framework.git"
 
     version("main", branch="main")
 
-    version('2.0.0',sha256="3d4986360a3961274b808f08123a1587bffbbd39f1b77d1ac40db8e0f0b91b3c")
+    version(
+        '2.0.0.0',
+        sha256='0f41c6b3af8344ce1fec030069559448f8267f87a4b05f9b8c247a8c27d49e42'
+    )  # noqa: E501
 
     depends_on("cmake@3.12:", type=("build", ))
-    depends_on("arccon@1.1:", type=("build", ))
+    depends_on("arccon@1.2:", type=("build", ))
     depends_on("arcdependencies", type=("build"))
     depends_on("dotnet-core-sdk@3.1:", type=("build", "link", "run"))
