@@ -135,12 +135,8 @@ class Arcane(CMakePackage):
     conflicts("+med", when="~mpi")
 
     # To be moved
-    variant("sloop", default=False, description="SLOOP linear solver")
     variant("hypre", default=False, description="Hypre linear solver")
-    variant("lima", default=False, description="LIMA mesh library")
-    depends_on("sloop", when="+sloop")
     depends_on("hypre", when="+hypre")
-    depends_on("lima", when="+lima")
 
     def build_required(self):
         to_cmake = {
