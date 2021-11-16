@@ -48,7 +48,7 @@ class Arcane(CMakePackage):
 
     version(
         '3.2.0.1',
-        sha256='81bc8964da5aca60a85b7785025e55679636d3a6067909f6ce2294219dd212ee'
+        sha256='1b2d9bbea2bbae1a9cbafd5c127f3865871393dbac6a3f6e22b1b8764e435649'
     )  #noqa: E501
 
     variant("valgrind", default=False, description="run tests with valgrind")
@@ -170,9 +170,9 @@ class Arcane(CMakePackage):
         return ';'.join(
             map(
                 lambda v: v[1]
-                if not isintance(v[1], list) else ";".join(v[1]),
-                filter(lambda v: '+{}'.format(v[0]) in self.specs,
-                       to_cmake.iters())))
+                if not isinstance(v[1], list) else ";".join(v[1]),
+                filter(lambda v: '+{}'.format(v[0]) in self.spec,
+                       to_cmake.items())))
 
     def cmake_args(self):
         spec = self.spec
