@@ -46,6 +46,11 @@ class Arcane(CMakePackage):
         sha256='24e0d1f2193aab2398a842d2e0cf9162c52d1d853e57feb60806085655a440d7'
     )  # noqa: E501
 
+    version(
+        '3.2.0.1',
+        sha256='1b2d9bbea2bbae1a9cbafd5c127f3865871393dbac6a3f6e22b1b8764e435649'
+    )  #noqa: E501
+
     variant("valgrind", default=False, description="run tests with valgrind")
     variant("mpi", default=True, description="Use MPI")
     variant("hdf5", default=False, description="HDF5 IO")
@@ -83,7 +88,10 @@ class Arcane(CMakePackage):
     depends_on("arccon@1.2:", type=("build"), when="@3.0.5.0")
     depends_on("axlstar@2.0:", type=("build"))
     depends_on("arccore@2.0:", type=("build", "link", "run"), when="@:3.0.4")
-    depends_on("arccore@2.0.3:", type=("build", "link", "run"), when="@3.0.5:")
+    depends_on("arccore@2.0.3",
+               type=("build", "link", "run"),
+               when="@3.0.5:3.1")
+    depends_on("arccore@2.0.4:", type=("build", "link", "run"), when="@3.2:")
     depends_on("arccore build_mode=Debug",
                type=("build", "link", "run"),
                when="build_type='Debug'")
@@ -127,12 +135,8 @@ class Arcane(CMakePackage):
     conflicts("+med", when="~mpi")
 
     # To be moved
-    variant("sloop", default=False, description="SLOOP linear solver")
     variant("hypre", default=False, description="Hypre linear solver")
-    variant("lima", default=False, description="LIMA mesh library")
-    depends_on("sloop", when="+sloop")
     depends_on("hypre", when="+hypre")
-    depends_on("lima", when="+lima")
 
     def build_required(self):
         to_cmake = {
@@ -166,9 +170,9 @@ class Arcane(CMakePackage):
         return ';'.join(
             map(
                 lambda v: v[1]
-                if not isintance(v[1], list) else ";".join(v[1]),
-                filter(lambda v: '+{}'.format(v[0]) in self.specs,
-                       to_cmake.iters())))
+                if not isinstance(v[1], list) else ";".join(v[1]),
+                filter(lambda v: '+{}'.format(v[0]) in self.spec,
+                       to_cmake.items())))
 
     def cmake_args(self):
         spec = self.spec
