@@ -56,6 +56,10 @@ class Arccore(CMakePackage):
         '2.0.3.0',
         sha256='fb7678038234fe4dcbde364459a4fc91b737c7ffb6151ad634def9edf2e18705'
     )  # noqa: E501
+    version(
+        '2.0.4.0',
+        sha256='d0af126861343305011f643f1fcf6311ba1f822ff4d5edb8956b55cb004341a2'
+    )  #noqa: E501
 
     variant('mpi', default=True, description='Use MPI')
 

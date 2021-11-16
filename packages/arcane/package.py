@@ -46,6 +46,11 @@ class Arcane(CMakePackage):
         sha256='24e0d1f2193aab2398a842d2e0cf9162c52d1d853e57feb60806085655a440d7'
     )  # noqa: E501
 
+    version(
+        '3.2.0.1',
+        sha256='81bc8964da5aca60a85b7785025e55679636d3a6067909f6ce2294219dd212ee'
+    )  #noqa: E501
+
     variant("valgrind", default=False, description="run tests with valgrind")
     variant("mpi", default=True, description="Use MPI")
     variant("hdf5", default=False, description="HDF5 IO")
@@ -83,7 +88,10 @@ class Arcane(CMakePackage):
     depends_on("arccon@1.2:", type=("build"), when="@3.0.5.0")
     depends_on("axlstar@2.0:", type=("build"))
     depends_on("arccore@2.0:", type=("build", "link", "run"), when="@:3.0.4")
-    depends_on("arccore@2.0.3:", type=("build", "link", "run"), when="@3.0.5:")
+    depends_on("arccore@2.0.3",
+               type=("build", "link", "run"),
+               when="@3.0.5:3.1")
+    depends_on("arccore@2.0.4:", type=("build", "link", "run"), when="@3.2:")
     depends_on("arccore build_mode=Debug",
                type=("build", "link", "run"),
                when="build_type='Debug'")
