@@ -26,7 +26,7 @@ from spack import *
 import os
 
 
-class Arcane(CMakePackage):
+class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     """Arcane Framework"""
 
     homepage = "https://arcaneframework.github.io"
@@ -70,7 +70,6 @@ class Arcane(CMakePackage):
     variant("vtk", default=False, description="Use VTK XDMF")
     variant("osmesa", default=False, description="Use Mesa rendering")
     variant("iceT", default=False, description="Use IceT")
-    variant("cuda", default=False, description="Enable Cuda")
 
     variant("parmetis", default=False, description="Use ParMetis partitioner")
     variant("scotch", default=False, description="Use (PT-)Scotch partitioner")
@@ -88,7 +87,8 @@ class Arcane(CMakePackage):
             description="Use embedding with coreclr")
     variant("monoembed", default=True, description="Use embedding with mono")
 
-    depends_on("cmake@3.13:", type="build")
+    depends_on("cmake@3.18:", type="build")
+
     depends_on("arccon@1.1:", type=("build"), when="@:3.0.4")
     depends_on("arccon@1.2:", type=("build"), when="@3.0.5.0")
     depends_on("axlstar@2.0:", type=("build"))
@@ -119,7 +119,6 @@ class Arcane(CMakePackage):
     depends_on("vtk", when="+vtk")
     depends_on("mesa", when="+osmesa")
     depends_on("icet", when="+iceT")
-    depends_on("cuda", when="+cuda")
     depends_on("med", when="+med")
     depends_on("otf2", when="+otf2")
 
@@ -143,6 +142,11 @@ class Arcane(CMakePackage):
     variant("hypre", default=False, description="Hypre linear solver")
     depends_on("hypre", when="+hypre")
 
+    depends_on('cuda', when='+cuda')
+    depends_on('hip', when='+rocm')
+    depends_on('cmake@3.21:', when='+rocm')
+    conflicts('+cuda', when='+rocm')
+
     def build_required(self):
         to_cmake = {
             'mpi': 'MPI',
@@ -157,6 +161,7 @@ class Arcane(CMakePackage):
             'osmesa': 'OSMesa',
             'iceT': 'IceT',
             'cuda': 'CUDAToolkit',
+            'rocm': 'Hip',
             'parmetis': 'Parmetis',
             'scotch': 'PTScotch',
             'zoltan': 'Zoltan',
@@ -204,5 +209,13 @@ class Arcane(CMakePackage):
 
         args.append(
             self.define('ARCANE_REQUIRED_PACKAGE_LIST', self.build_required()))
+
+        if '+rocm' in self.spec:
+            args.append(self.define('ARCANE_ACCELERATOR_MODE', 'ROCMHIP'))
+        elif '+cuda' in self.spec:
+            args.append(self.define('ARCANE_ACCELERATOR_MODE', 'CUDANVCC'))
+            cuda_arch = self.spec.variants['cuda_arch'].value[0]
+            if cuda_arch != 'none':
+                args.append(self.define('CMAKE_CUDA_ARCHITECTURES', ))
 
         return args
