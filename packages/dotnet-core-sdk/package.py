@@ -68,7 +68,7 @@ class DotnetCoreSdk(Package):
             spack_env.set('DOTNET_CLI_TELEMETRY_OPTOUT', 1)
         # Avoid "Couldn't find a valid ICU package installed on the system."
         # else, we have to find a way to add a dependency to icu4c package.
-        # TODO: Do it only on aarch64 platform.
+        # It's the case on aarch64 platform or containerize RHEL8.
         spack_env.set('DOTNET_SYSTEM_GLOBALIZATION_INVARIANT', 1)
 
     def install(self, spec, prefix):
