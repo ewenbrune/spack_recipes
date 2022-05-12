@@ -129,7 +129,7 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("parmetis@4:", when="+parmetis")
     depends_on("scotch +mpi -metis +int64", when="+scotch")
-    depends_on("zoltan +mpi -parmetis -fortran", when="+zoltan")
+    depends_on("zoltan +mpi -parmetis -fortran", when="+zoltan~trilinos")
 
     depends_on("libunwind", when="+libunwind")
     depends_on("udunits", when="+udunits")
@@ -143,8 +143,19 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
 
     # To be moved
     # For Aleph
-    variant("hypre", default=False, description="Hypre linear solver")
+    variant("hypre",
+            default=False,
+            description="hypre linear solver (for Aleph)")
     depends_on("hypre", when="+hypre")
+    variant("trilinos",
+            default=False,
+            description="Trilinos linear solver (for Aleph)")
+    depends_on("trilinos +aztec+ml+ifpack", when="+trilinos")
+    depends_on("trilinos +zoltan", when="+zoltan+trilinos")
+    variant("petsc",
+            default=False,
+            description="PETSc linear solver (for Aleph)")
+    depends_on("petsc +mpi", when="+petsc")
 
     depends_on('cuda', when='+cuda')
     depends_on('hip', when='+rocm')
@@ -176,6 +187,7 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
             'papi': 'Papi',
             'sloop': 'Sloop',
             'hypre': 'Hypre',
+            'trilinos': 'Trilinos',
             'lima': 'Lima',
             'wrapper': 'SWIG',
             'monoembed': 'MonoEmbed',
@@ -193,6 +205,7 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
         args = [
             self.define("BUILD_SHARED_LIBS", True),
             self.define("ARCANE_BUILD_WITH_SPACK", True),
+            self.define("ARCANE_NO_DEFAULT_PACKAGE", True),
             self.define_from_variant("ARCANE_BUILD_MODE", "build_type"),
         ]
         if "mpi" in self.spec:
