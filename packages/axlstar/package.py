@@ -59,6 +59,11 @@ class Axlstar(CMakePackage):
         sha256="989771c99b889bd8a1d83db04c6db593b1f05d4421d510fed03ab549f376750d",
     )
 
+    version(
+        "2.0.6.0",
+        sha256="66cb3b2b3f20fa9524c160f027a072131e71a1654ba29c2c43146aef0264d864",
+    )
+
     depends_on("cmake@3.12:", type=("build",))
     depends_on("arccon@1.2:", type=("build",))
     depends_on("arcdependencies", type=("build"))
