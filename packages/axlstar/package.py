@@ -68,3 +68,4 @@ class Axlstar(CMakePackage):
     depends_on("arccon@1.2:", type=("build",))
     depends_on("arcdependencies", type=("build"))
     depends_on("dotnet-core-sdk@3.1:", type=("build", "link", "run"))
+    depends_on("arcdependencies@1.5:", type=("build"), when="@2.0.6:")
