@@ -188,13 +188,15 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
         else:
             args.append("-DARCANE_WANT_NOMPI=YES")
 
-        default_partitionner = "Metis"
-        if "metis" in self.spec:
+        default_partitionner = "Auto"
+        if self.version < Version('3.7'):
             default_partitionner = "Metis"
-        elif "scotch" in self.spec:
-            default_partitionner = "PTScotch"
-        elif "zoltan" in self.spec:
-            default_partitionner = "Zoltan"
+            if "metis" in self.spec:
+                default_partitionner = "Metis"
+            elif "scotch" in self.spec:
+                default_partitionner = "PTScotch"
+            elif "zoltan" in self.spec:
+                default_partitionner = "Zoltan"
 
         args.append(self.define("ARCANE_DEFAULT_PARTITIONER", default_partitionner))
 
