@@ -73,6 +73,10 @@ class Arccore(CMakePackage):
         "2.0.11.0",
         sha256="bd8514dc9490b91fe8b1662edefb6ad847a01e096c5c6a03e02e45b9a1194e99",
     )
+    version(
+        "2.0.12.0",
+        sha256="77a3b6c47fd43d5ddb68881c6cc65df799f3699540853485c7d9f74acd7dc2d9",
+    )
 
     variant("mpi", default=True, description="Use MPI")
 

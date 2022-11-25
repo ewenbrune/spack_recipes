@@ -40,6 +40,10 @@ class Arcdependencies(CMakePackage):
         "1.3.0",
         sha256="deaa57c7da18db29e6fd20809f5227042d26ec96460d10a38b64885906e40175",
     )
+    version(
+        "1.5.0",
+        sha256="628233f0f796ffeba955d1166e32f4cf0e9c0e22b1571d28476e3251bc3b2b19",
+    )
 
     version("main", branch="main")
 

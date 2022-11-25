@@ -46,6 +46,18 @@ class Arccon(CMakePackage):
         "1.2.0",
         sha256="bdea35e4c559c85cca7bd82d1a9d8859c465832c645baa127595952131933002",
     )
+    version(
+        "1.3.0",
+        sha256="524fcf1f4c020092b2dede5fda6255f1dc02202c03ea609329d3f89bcdd45032",
+    )
+    version(
+        "1.4.0",
+        sha256="89220ab783c0325dca3e7e0f22240f8e8723440a52806f3d0db6bdb3bdb95f80",
+    )
+    version(
+        "1.5.0",
+        sha256="9e0b4719fd8a8d6e7fc59d19b4619851d772d9d97ce55ff3d4c0e40376d21b29",
+    )
 
     version("main", branch="main")
 

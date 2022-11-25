@@ -33,29 +33,18 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/arcaneframework/framework.git"
 
     version(
-        "3.0.1",
-        sha256="45afb7fadc9ae5ca430c72c9c73ca6ba46816092aca502d0266d9140fb47ef35",
-        url="https://gitlab.com/cea-ifpen/arcane/-/archive/v3.0.1/arcane-v3.0.1.tar.gz",
-    )
-
-    version(
-        "3.0.5.0",
-        sha256="24e0d1f2193aab2398a842d2e0cf9162c52d1d853e57feb60806085655a440d7",
-    )
-
-    version(
-        "3.2.0.1",
-        sha256="1b2d9bbea2bbae1a9cbafd5c127f3865871393dbac6a3f6e22b1b8764e435649",
-    )
-
-    version(
-        "3.4.5.0",
-        sha256="d2e2834a11a915a4c8a0a8993bd368ecefb4033f740168e7b7449dc17bca0860",
-    )
-
-    version(
         "3.5.7.0",
         sha256="bfd1cf924e83265981aafd40e31a27753ce5269bccf392289d046c5282247d29",
+    )
+
+    version(
+        "3.6.13.0",
+        sha256="70004aa762f6ae0c3f7ae95bd4b076eb5011007410611641fdf1489b7b896598",
+    )
+
+    version(
+        "3.7.24.0",
+        sha256="663a070f5c3262286d85068226a283538a74e9be7a3d8ec7bf57dccef2fa76b9",
     )
 
     variant("valgrind", default=False, description="run tests with valgrind")
@@ -87,12 +76,12 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.18:", type="build")
 
-    depends_on("arccon@1.1:", type=("build"), when="@:3.0.4")
-    depends_on("arccon@1.2:", type=("build"), when="@3.0.5.0")
+    depends_on("arccon@1.2:", type=("build"), when="@3.0.5:")
+    depends_on("arccon@1.5:", type=("build"), when="@3.7:")
     depends_on("axlstar@2.0:", type=("build"))
-    depends_on("arccore@2.0:", type=("build", "link", "run"), when="@:3.0.4")
-    depends_on("arccore@2.0.3", type=("build", "link", "run"), when="@3.0.5:3.1")
+    depends_on("axlstar@2.0.6:", type=("build"), when="@3.7:")
     depends_on("arccore@2.0.6:", type=("build", "link", "run"), when="@3.2:")
+    depends_on("arccore@2.0.12:", type=("build", "link", "run"), when="@3.6:")
     depends_on(
         "arccore build_mode=Debug",
         type=("build", "link", "run"),
@@ -199,13 +188,15 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
         else:
             args.append("-DARCANE_WANT_NOMPI=YES")
 
-        default_partitionner = "Metis"
-        if "metis" in self.spec:
+        default_partitionner = "Auto"
+        if self.version < Version('3.7'):
             default_partitionner = "Metis"
-        elif "scotch" in self.spec:
-            default_partitionner = "PTScotch"
-        elif "zoltan" in self.spec:
-            default_partitionner = "Zoltan"
+            if "metis" in self.spec:
+                default_partitionner = "Metis"
+            elif "scotch" in self.spec:
+                default_partitionner = "PTScotch"
+            elif "zoltan" in self.spec:
+                default_partitionner = "Zoltan"
 
         args.append(self.define("ARCANE_DEFAULT_PARTITIONER", default_partitionner))
 
