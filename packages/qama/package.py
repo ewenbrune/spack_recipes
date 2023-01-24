@@ -35,4 +35,4 @@ class Qama(CMakePackage):
 
     depends_on("arcane")
 
-    root_cmakelists_dir = "quicksilver"
+    root_cmakelists_dir = "qama"
