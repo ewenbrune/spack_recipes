@@ -47,6 +47,16 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
         sha256="663a070f5c3262286d85068226a283538a74e9be7a3d8ec7bf57dccef2fa76b9",
     )
 
+    version(
+        "3.7.24.0",
+        sha256="663a070f5c3262286d85068226a283538a74e9be7a3d8ec7bf57dccef2fa76b9",
+    )
+
+    version(
+        "3.10.12.0",
+        sha256="24f4b30648be6bed26311425445a3b42668e8637a2ef750d4f57e4f59e69f1a1",
+    )
+
     variant("valgrind", default=False, description="run tests with valgrind")
     variant("mpi", default=True, description="Use MPI")
     variant("hdf5", default=False, description="HDF5 IO")
@@ -57,12 +67,12 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("mkl", default=False, description="Use Intel MKL")
     variant("bzip2", default=False, description="Use bzip2 compression")
-    variant("lz4", default=False, description="Use lz4 compression")
+    variant("lz4", default=True, description="Use lz4 compression")
     variant("vtk", default=False, description="Use VTK XDMF")
     variant("osmesa", default=False, description="Use Mesa rendering")
     variant("iceT", default=False, description="Use IceT")
 
-    variant("parmetis", default=False, description="Use ParMetis partitioner")
+    variant("parmetis", default=True, description="Use ParMetis partitioner")
     variant("scotch", default=False, description="Use (PT-)Scotch partitioner")
     variant("zoltan", default=False, description="Use Zoltan partitioner")
 
@@ -72,28 +82,32 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     variant("papi", default=False, description="PAPI counters")
 
     variant("coreclrembed", default=True, description="Use embedding with coreclr")
-    variant("monoembed", default=True, description="Use embedding with mono")
+    variant("monoembed", default=False, description="Use embedding with mono")
 
-    depends_on("cmake@3.18:", type="build")
+    depends_on("cmake@3.21:", type="build")
 
     depends_on("arccon@1.2:", type=("build"), when="@3.0.5:")
     depends_on("arccon@1.5:", type=("build"), when="@3.7:")
+
     depends_on("axlstar@2.0:", type=("build"))
     depends_on("axlstar@2.0.6:", type=("build"), when="@3.7:")
+    depends_on("axlstar@2.2:", type=("build"), when="@3.10:")
+
     depends_on("arccore@2.0.6:", type=("build", "link", "run"), when="@3.2:")
     depends_on("arccore@2.0.12:", type=("build", "link", "run"), when="@3.6:")
+    depends_on("arccore@2.5:", type=("build", "link", "run"), when="@3.10:")
+
     depends_on(
         "arccore build_mode=Debug",
         type=("build", "link", "run"),
         when="build_type='Debug'",
     )
     depends_on("arcdependencies", type=("build"))
-    depends_on("mono@5.16:", type=("build", "link", "run"), when="+monoembed")
+    depends_on("arcdependencies@1.5:", type=("build"), when="@3.10:")
+
+    depends_on("mono@6.12:", type=("build", "link", "run"), when="+monoembed")
     depends_on("swig@4:", type=("build"), when="+wrapper")
-    depends_on(
-        "dotnet-core-sdk@3.1:",
-        type=("build", "link", "run"),
-    )
+    depends_on("dotnet-core-sdk@6:", type=("build", "link", "run"))
     depends_on("glib")
     depends_on("libxml2")
     depends_on("valgrind", when="+valgrind")
@@ -135,7 +149,6 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cuda", when="+cuda")
     depends_on("hip", when="+rocm")
-    depends_on("cmake@3.21:", when="+rocm")
     conflicts("+cuda", when="+rocm")
 
     def build_required(self):
