@@ -77,12 +77,20 @@ class Arccore(CMakePackage):
         "2.0.12.0",
         sha256="77a3b6c47fd43d5ddb68881c6cc65df799f3699540853485c7d9f74acd7dc2d9",
     )
+    version(
+        "2.5.0.0",
+        sha256="e88d3a0146a84f5948e9cd09d68c79ce293b9aa546f32b5343dc6c59eff5c2ca",
+    )
 
     variant("mpi", default=True, description="Use MPI")
 
     # Arccon must be exported to client
     depends_on("arccon", type=("build", "link"))
+    depends_on("arccon@1.5:", type=("build", "link"), when="@2.5:")
+
     depends_on("cmake@3.18:", type="build")
+    depends_on("cmake@3.21:", type="build", when="@2.5:")
+
     depends_on("glib")
     depends_on("mpi", when="+mpi")
 

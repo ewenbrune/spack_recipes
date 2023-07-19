@@ -64,8 +64,19 @@ class Axlstar(CMakePackage):
         sha256="66cb3b2b3f20fa9524c160f027a072131e71a1654ba29c2c43146aef0264d864",
     )
 
+    version(
+        "2.2.0.0",
+        sha256="f9b1c5b33495703cd4dbc5fae1ab54f3df7c195a2a0732732a6f6e74edea3349",
+    )
+
     depends_on("cmake@3.12:", type=("build",))
+    depends_on("cmake@3.21:", type=("build",), when="@2.2:")
+
     depends_on("arccon@1.2:", type=("build",))
-    depends_on("arcdependencies", type=("build"))
+    depends_on("arccon@1.5:", type=("build", "link"), when="@2.2:")
+
     depends_on("dotnet-core-sdk@3.1:", type=("build", "link", "run"))
-    depends_on("arcdependencies@1.5:", type=("build"), when="@2.0.6:")
+    depends_on("dotnet-core-sdk@6:", type=("build", "link", "run"), when="@2.2:")
+
+    depends_on("arcdependencies", type=("build"))
+    depends_on("arcdependencies@1.5:", type=("build"), when="@2.2:")
