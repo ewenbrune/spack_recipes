@@ -67,12 +67,12 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("mkl", default=False, description="Use Intel MKL")
     variant("bzip2", default=False, description="Use bzip2 compression")
-    variant("lz4", default=False, description="Use lz4 compression")
+    variant("lz4", default=True, description="Use lz4 compression")
     variant("vtk", default=False, description="Use VTK XDMF")
     variant("osmesa", default=False, description="Use Mesa rendering")
     variant("iceT", default=False, description="Use IceT")
 
-    variant("parmetis", default=False, description="Use ParMetis partitioner")
+    variant("parmetis", default=True, description="Use ParMetis partitioner")
     variant("scotch", default=False, description="Use (PT-)Scotch partitioner")
     variant("zoltan", default=False, description="Use Zoltan partitioner")
 
@@ -82,7 +82,7 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     variant("papi", default=False, description="PAPI counters")
 
     variant("coreclrembed", default=True, description="Use embedding with coreclr")
-    variant("monoembed", default=True, description="Use embedding with mono")
+    variant("monoembed", default=False, description="Use embedding with mono")
 
     depends_on("cmake@3.21:", type="build")
 
