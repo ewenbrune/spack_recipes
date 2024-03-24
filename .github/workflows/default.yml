@@ -1,0 +1,34 @@
+name: 'Test spack recipes'
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  SOURCE_DIR: '/__w/arcanespack/src'
+  BUILD_DIR: '/__w/arcanespack/build'
+  SOURCE_DIR_SPACK: '/__w/spack/src'
+
+jobs:
+  tests:
+    name: 'Build and Test'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Checkout spack
+        uses: actions/checkout@v4
+        with:
+          repository: spack/spack
+          ref: v0.21.2
+          path: spack
+
+      - name: Print directory infos
+        shell: 'bash'
+        run: |
+          ls -lart '${{ github.workspace }}'
