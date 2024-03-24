@@ -29,97 +29,66 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     """Arcane Framework"""
 
     homepage = "https://arcaneframework.github.io"
-    url = "https://github.com/arcaneframework/framework/releases/download/arcane-v3.0.5.0/arcane-3.0.5.0.src.tar.gz"
+
+    url = "https://github.com/arcaneframework/framework/releases/download/arcane-v3.11.15.0/framework-3.11.15.0.src.tar.gz"
     git = "https://github.com/arcaneframework/framework.git"
 
     version(
-        "3.5.7.0",
-        sha256="bfd1cf924e83265981aafd40e31a27753ce5269bccf392289d046c5282247d29",
+        "3.11.15.0",
+        sha256="2b1471bc34d4f9671a73372e5401b2888c477a4f5e93c5ad09f903d9b12f890f",
     )
 
-    version(
-        "3.6.13.0",
-        sha256="70004aa762f6ae0c3f7ae95bd4b076eb5011007410611641fdf1489b7b896598",
+    generator("ninja")
+
+    variant(
+        "build_mode",
+        default="Release",
+        description="Arccore build type",
+        values=("Debug", "Check", "Release"),
     )
 
-    version(
-        "3.7.24.0",
-        sha256="663a070f5c3262286d85068226a283538a74e9be7a3d8ec7bf57dccef2fa76b9",
-    )
-
-    version(
-        "3.7.24.0",
-        sha256="663a070f5c3262286d85068226a283538a74e9be7a3d8ec7bf57dccef2fa76b9",
-    )
-
-    version(
-        "3.10.12.0",
-        sha256="24f4b30648be6bed26311425445a3b42668e8637a2ef750d4f57e4f59e69f1a1",
-    )
+    variant("mpi", default=True, description="Use MPI")
+    variant("hdf5", default=True, description="HDF5 IO")
+    variant("tbb", default=True, description="Use Intel TBB")
+    variant("dotnet_wrapper", default=True, description=".Net wrappers")
+    variant("lz4", default=True, description="Use lz4 compression")
 
     variant("valgrind", default=False, description="run tests with valgrind")
-    variant("mpi", default=True, description="Use MPI")
-    variant("hdf5", default=False, description="HDF5 IO")
     variant("med", default=False, description="Salome MED support")
     variant("otf2", default=False, description="OTF2 library support")
-    variant("tbb", default=True, description="Use Intel TBB")
-    variant("wrapper", default=True, description=".Net wrappers")
-
     variant("mkl", default=False, description="Use Intel MKL")
     variant("bzip2", default=False, description="Use bzip2 compression")
-    variant("lz4", default=True, description="Use lz4 compression")
-    variant("vtk", default=False, description="Use VTK XDMF")
-    variant("osmesa", default=False, description="Use Mesa rendering")
-    variant("iceT", default=False, description="Use IceT")
 
     variant("parmetis", default=True, description="Use ParMetis partitioner")
     variant("scotch", default=False, description="Use (PT-)Scotch partitioner")
     variant("zoltan", default=False, description="Use Zoltan partitioner")
 
-    variant("libunwind", default=False, description="Back trace with libUnwind")
-    variant("udunits", default=False, description="Udunits")
+    variant("libunwind", default=True, description="Back trace with libUnwind")
     variant("hwloc", default=True, description="hwloc support")
+
+    variant("udunits", default=False, description="Udunits")
     variant("papi", default=False, description="PAPI counters")
 
-    variant("coreclrembed", default=True, description="Use embedding with coreclr")
-    variant("monoembed", default=False, description="Use embedding with mono")
+    variant("build_tests", default=True, description="Compile tests")
 
-    depends_on("cmake@3.21:", type="build")
+    # TODO: handle the dependencies of this variant
+    variant("alien", default=False, description="Compile with Alien")
+    depends_on("blas", when="+alien")
+    depends_on("boost +program_options", when="+alien")
 
-    depends_on("arccon@1.2:", type=("build"), when="@3.0.5:")
-    depends_on("arccon@1.5:", type=("build"), when="@3.7:")
+    depends_on("cmake@3.26:", type="build")
 
-    depends_on("axlstar@2.0:", type=("build"))
-    depends_on("axlstar@2.0.6:", type=("build"), when="@3.7:")
-    depends_on("axlstar@2.2:", type=("build"), when="@3.10:")
-
-    depends_on("arccore@2.0.6:", type=("build", "link", "run"), when="@3.2:")
-    depends_on("arccore@2.0.12:", type=("build", "link", "run"), when="@3.6:")
-    depends_on("arccore@2.5:", type=("build", "link", "run"), when="@3.10:")
-
-    depends_on(
-        "arccore build_mode=Debug",
-        type=("build", "link", "run"),
-        when="build_type='Debug'",
-    )
-    depends_on("arcdependencies", type=("build"))
-    depends_on("arcdependencies@1.5:", type=("build"), when="@3.10:")
-
-    depends_on("mono@6.12:", type=("build", "link", "run"), when="+monoembed")
-    depends_on("swig@4:", type=("build"), when="+wrapper")
+    depends_on("swig@4:", type=("build"), when="+dotnet_wrapper")
     depends_on("dotnet-core-sdk@6:", type=("build", "link", "run"))
     depends_on("glib")
     depends_on("libxml2")
     depends_on("valgrind", when="+valgrind")
     depends_on("mpi", when="+mpi")
-    depends_on("hdf5", when="+hdf5")
-    depends_on("intel-tbb", when="+tbb")
+    depends_on("hdf5@1.10:", when="+hdf5")
+    depends_on("intel-tbb@2021:", when="+tbb")
     depends_on("mkl", when="+mkl")
     depends_on("bzip2", when="+bzip2")
     depends_on("lz4", when="+lz4")
-    depends_on("vtk", when="+vtk")
-    depends_on("mesa", when="+osmesa")
-    depends_on("icet", when="+iceT")
     depends_on("med", when="+med")
     depends_on("otf2", when="+otf2")
 
@@ -159,11 +128,8 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
             "lz4": "LZ4",
             "med": "MEDFile",
             "tbb": "TBB",
-            "vtk": ["vtkIOXML", "vtkIOXdmf2"],
             "mkl": "MKL",
             "otf2": "Otf2",
-            "osmesa": "OSMesa",
-            "iceT": "IceT",
             "cuda": "CUDAToolkit",
             "rocm": "Hip",
             "parmetis": "Parmetis",
@@ -174,13 +140,10 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
             "valgrind": "Valgrind",
             "hwloc": "HWLoc",
             "papi": "Papi",
-            "sloop": "Sloop",
             "hypre": "Hypre",
             "trilinos": "Trilinos",
             "lima": "Lima",
-            "wrapper": "SWIG",
-            "monoembed": "MonoEmbed",
-            "coreclrembed": "CoreClrEmbed",
+            "dotnet_wrapper": ["SWIG", "CoreClrEmbed"]
         }
         return ";".join(
             map(
@@ -192,28 +155,31 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         args = [
             self.define("BUILD_SHARED_LIBS", True),
+            self.define("ARCCORE_CXX_STANDARD", "20"),
             self.define("ARCANE_BUILD_WITH_SPACK", True),
             self.define("ARCANE_NO_DEFAULT_PACKAGE", True),
-            self.define_from_variant("ARCANE_BUILD_MODE", "build_type"),
+            self.define("ARCANE_NO_DEFAULT_PACKAGE", True),
+            self.define("ARCANEFRAMEWORK_BUILD_COMPONENTS", "Arcane"),
+            self.define("ARCANE_DISABLE_DEPRECATED_WARNINGS", "TRUE"),
+            self.define_from_variant("ARCCORE_USE_MPI", "mpi"),
+            self.define_from_variant("ARCCORE_BUILD_MODE", "build_mode"),
+            self.define_from_variant("ARCANE_ENABLE_TESTS", "build_tests"),
+            self.define_from_variant("ARCANE_ENABLE_DOTNET_WRAPPER", "dotnet_wrapper"),
         ]
-        if "mpi" in self.spec:
-            args.append("-DARCANE_WANT_NOMPI=NO")
-        else:
-            args.append("-DARCANE_WANT_NOMPI=YES")
+
+        # List of components to build
+        components_to_build = "Arcane"
+        if "+alien" in self.spec:
+            components_to_build = "Arcane;Alien"
+        args.append(self.define("ARCANEFRAMEWORK_BUILD_COMPONENTS", components_to_build))
 
         default_partitionner = "Auto"
-        if self.version < Version('3.7'):
-            default_partitionner = "Metis"
-            if "metis" in self.spec:
-                default_partitionner = "Metis"
-            elif "scotch" in self.spec:
-                default_partitionner = "PTScotch"
-            elif "zoltan" in self.spec:
-                default_partitionner = "Zoltan"
-
         args.append(self.define("ARCANE_DEFAULT_PARTITIONER", default_partitionner))
-
         args.append(self.define("ARCANE_REQUIRED_PACKAGE_LIST", self.build_required()))
+
+        if "+alien" in self.spec:
+            self.define("ALIEN_DEFAULT_OPTIONS", False),
+            self.define_from_variant("ALIEN_PLUGIN_HYPRE", "hypre"),
 
         if "+rocm" in self.spec:
             args.append(self.define("ARCANE_ACCELERATOR_MODE", "ROCMHIP"))
