@@ -8,14 +8,12 @@ on:
   workflow_dispatch:
 
 env:
-  SOURCE_DIR: '/__w/arcanespack/src'
-  BUILD_DIR: '/__w/arcanespack/build'
   SOURCE_DIR_SPACK: '/__w/spack/src'
 
 jobs:
   tests:
     name: 'Build and Test'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repo
@@ -32,3 +30,12 @@ jobs:
         shell: 'bash'
         run: |
           ls -lart '${{ github.workspace }}'
+
+      - name: Check And build package Arcane
+        shell: 'bash'
+        run: |
+          . spack/share/spack/setup-env.sh
+          spack repo add .
+          spack info arcane
+          spack spec arcane
+          spack install arcane build_type=Debug
