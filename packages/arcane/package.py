@@ -34,6 +34,11 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/arcaneframework/framework.git"
 
     version(
+        "3.14.15.0",
+        sha256="f7390ac2b9e4ba48cbf01d2cd6bc030d85a3011683d3a57ec48cf73f6f0edf6e",
+    )
+
+    version(
         "3.13.8.0",
         sha256="7e7571ccabbd807d9f069bc0f648b94e8f424f617817a45c9487ce4dc3e5ec28",
     )
