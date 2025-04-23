@@ -1,29 +1,4 @@
-##############################################################################
-# Copyright (c) 2013-2018, Lawrence Livermore National Security, LLC.
-# Produced at the Lawrence Livermore National Laboratory.
-#
-# This file is part of Spack.
-# Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
-# LLNL-CODE-647188
-#
-# For details, see https://github.com/spack/spack
-# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
-#
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License (as
-# published by the Free Software Foundation) version 2.1, February 1999.
-#
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the IMPLIED WARRANTY OF
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the terms and
-# conditions of the GNU Lesser General Public License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-##############################################################################
-from spack import *
-
+from spack.package import *
 
 class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     """Arcane Framework"""
@@ -39,13 +14,8 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     version(
-        "3.13.8.0",
-        sha256="7e7571ccabbd807d9f069bc0f648b94e8f424f617817a45c9487ce4dc3e5ec28",
-    )
-
-    version(
-        "3.11.15.0",
-        sha256="2b1471bc34d4f9671a73372e5401b2888c477a4f5e93c5ad09f903d9b12f890f",
+        "3.15.3.0",
+        sha256="99b2a4cc967047f102cf4b2140d1462324c51ff8293d86b1df5b60bf791097f2",
     )
 
     generator("ninja")
@@ -81,10 +51,16 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("build_tests", default=True, description="Compile tests")
 
+    variant("cuda_clang", default=False, description="Use clang (instead of nvcc) to compile CUDA code")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
     # TODO: handle the dependencies of this variant
     variant("alien", default=False, description="Compile with Alien")
     depends_on("blas", when="+alien")
     depends_on("boost +program_options", when="+alien")
+    depends_on("fortran", type="build", when="+alien")
 
     depends_on("cmake@3.26:", type="build")
 
@@ -129,6 +105,8 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cuda", when="+cuda")
     depends_on("hip", when="+rocm")
     conflicts("+cuda", when="+rocm")
+
+    depends_on("llvm+clang+cuda", when="+cuda +cuda_clang")
 
     def build_required(self):
         to_cmake = {
@@ -192,12 +170,16 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ALIEN_PLUGIN_HYPRE", "hypre"),
 
         if "+rocm" in self.spec:
-            args.append(self.define("ARCANE_ACCELERATOR_MODE", "ROCMHIP"))
+            args.append(self.define("ARCANE_ACCELERATOR_MODE", "ROCM"))
             amd_arch = self.spec.variants["amdgpu_target"].value
             if amd_arch:
                 args.append(self.define("CMAKE_HIP_ARCHITECTURES", ";".join(amd_arch)))
         elif "+cuda" in self.spec:
-            args.append(self.define("ARCANE_ACCELERATOR_MODE", "CUDANVCC"))
+            args.append(self.define("ARCANE_ACCELERATOR_MODE", "CUDA"))
+            # Experimental: use clang to compile CUDA code
+            if "+cuda_clang" in self.spec:
+                args.append(self.define("CMAKE_CUDA_COMPILER", join_path(self.spec["llvm"].prefix.bin, "clang++")))
+
             cuda_arch = self.spec.variants["cuda_arch"].value
             if cuda_arch:
                 args.append(
