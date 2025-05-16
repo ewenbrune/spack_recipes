@@ -5,8 +5,8 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://arcaneframework.github.io"
 
-    url = "https://github.com/arcaneframework/framework/releases/download/arcane-v3.11.15.0/framework-3.11.15.0.src.tar.gz"
-    git = "https://github.com/arcaneframework/framework.git"
+    #url = "https://github.com/arcaneframework/framework/releases/download/arcane-v3.11.15.0/framework-3.11.15.0.src.tar.gz"
+    git = "https://github.com/ewenbrune/framework.git"
 
     version(
         "3.14.15.0",
