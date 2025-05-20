@@ -8,17 +8,7 @@ class Arcane(CMakePackage, CudaPackage, ROCmPackage):
     #url = "https://github.com/arcaneframework/framework/releases/download/arcane-v3.11.15.0/framework-3.11.15.0.src.tar.gz"
     git = "https://github.com/ewenbrune/framework.git"
 
-    version("test", branch="main", submodules=True)
-    
-    version(
-        "3.14.15.0",
-        sha256="f7390ac2b9e4ba48cbf01d2cd6bc030d85a3011683d3a57ec48cf73f6f0edf6e",
-    )
-
-    version(
-        "3.15.3.0",
-        sha256="99b2a4cc967047f102cf4b2140d1462324c51ff8293d86b1df5b60bf791097f2",
-    )
+    version("extractConfig", branch="main", submodules=True)
 
     generator("ninja")
 
